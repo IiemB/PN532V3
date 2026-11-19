@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PN532 NFC bench</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">NFC</span>
+      <div>
+        <h1>PN532 bench</h1>
+        <p class="sub" id="version">ESP32-C3 · PN532 V3</p>
+      </div>
+    </div>
+    <div class="pills">
+      <span class="pill" id="pill-reader">reader …</span>
+      <span class="pill" id="pill-net">net …</span>
+      <span class="pill" id="pill-uptime">—</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="card span-2">
+      <div class="card-head">
+        <h2>Live tag</h2>
+        <div class="head-actions">
+          <button id="btn-reread" class="ghost" type="button">Re-read</button>
+          <button id="btn-source" class="ghost" type="button">Set as clone source</button>
+        </div>
+      </div>
+
+      <div id="tag-empty" class="empty">No tag detected — place a tag on the reader.</div>
+
+      <div id="tag-view" class="hidden">
+        <div class="uid-row">
+          <span id="tag-uid" class="uid">—</span>
+          <span id="tag-model" class="badge">—</span>
+        </div>
+        <dl class="meta">
+          <div><dt>Tag type</dt><dd id="tag-type">—</dd></div>
+          <div><dt>Family</dt><dd id="tag-kind">—</dd></div>
+          <div><dt>SAK</dt><dd id="tag-sak">—</dd></div>
+          <div><dt>ATQA</dt><dd id="tag-atqa">—</dd></div>
+          <div><dt>UID size</dt><dd id="tag-uid-size">—</dd></div>
+          <div><dt>Protocol</dt><dd id="tag-protocol">—</dd></div>
+          <div><dt>Manufacturer</dt><dd id="tag-maker">—</dd></div>
+          <div><dt>Capacity</dt><dd id="tag-capacity">—</dd></div>
+          <div><dt>Read</dt><dd id="tag-age">—</dd></div>
+          <div><dt>Status</dt><dd id="tag-state">—</dd></div>
+        </dl>
+        <div class="tabs">
+          <button class="tab active" type="button" data-view="records">Records</button>
+          <button class="tab" type="button" data-view="memory">Memory</button>
+        </div>
+        <div id="view-records" class="panel"></div>
+        <div id="view-memory" class="panel hidden"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Clone</h2></div>
+      <div class="clone-grid">
+        <div>
+          <p class="label">Source</p>
+          <p id="source-uid" class="mono muted">not selected</p>
+          <p id="source-meta" class="sub">Scan a tag, then use “Set as clone source”.</p>
+        </div>
+        <div class="clone-arrow">→</div>
+        <div>
+          <p class="label">Target</p>
+          <p id="target-uid" class="mono muted">waiting for tag</p>
+          <p id="target-meta" class="sub">—</p>
+        </div>
+      </div>
+      <div class="options">
+        <label><input type="checkbox" id="opt-uid" /> Write UID (UID-writable blank only)</label>
+        <label><input type="checkbox" id="opt-trailers" /> Include Mifare sector trailers</label>
+      </div>
+      <button id="btn-clone" class="primary wide" type="button">Clone source → target</button>
+      <div id="result" class="result hidden"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Write records</h2></div>
+      <p class="sub">Builds a fresh NDEF message and writes it to the current Type 2 tag.</p>
+      <div id="record-editor" class="record-editor"></div>
+      <div class="row">
+        <button id="btn-add-record" class="ghost" type="button">+ Add record</button>
+        <button id="btn-write" class="primary" type="button">Write to tag</button>
+      </div>
+      <div id="write-result" class="result hidden"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>History</h2></div>
+      <ul id="history" class="history"><li class="muted">No tags seen yet.</li></ul>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Network</h2></div>
+      <form id="wifi-form" class="stack">
+        <label class="field">SSID
+          <input id="wifi-ssid" autocomplete="off" placeholder="HomeWiFi" />
+        </label>
+        <label class="field">Password
+          <input id="wifi-pass" type="password" autocomplete="off" placeholder="••••••••" />
+        </label>
+        <div class="row">
+          <button type="button" id="btn-scan" class="ghost">Scan networks</button>
+          <button type="submit" class="primary">Save &amp; reboot</button>
+        </div>
+      </form>
+      <ul id="wifi-list" class="wifi-list hidden"></ul>
+    </section>
+
+    <section class="card span-2">
+      <div class="card-head">
+        <h2>Log</h2>
+        <button id="btn-clear-log" class="ghost" type="button">Clear</button>
+      </div>
+      <pre id="log" class="log"></pre>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
